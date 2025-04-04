@@ -7,18 +7,21 @@ import {cors} from 'hono/cors'
 const app = new Hono();
 
 
-// Configure CORS middleware
+// Apply CORS middleware to all routes
 app.use(
-  '/api/*',
+  '*',
   cors({
-    origin: ['http://127.0.0.1:5500', 'https://christine-portfolio-red.vercel.app/'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-    allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
-    exposeHeaders: ['Content-Length'],
-    maxAge: 600,
+    origin: [
+      'https://christine-portfolio-red.vercel.app',
+      'http://localhost:5500', // For local development
+      'http://127.0.0.1:5500' // Alternative localhost
+    ],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    allowHeaders: ['Content-Type'],
     credentials: true,
+    maxAge: 600
   })
-);
+)
 
 app.post('/api/contact', async (c) => {
   try {
