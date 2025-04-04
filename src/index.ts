@@ -56,14 +56,14 @@ app.post('/api/contact', async (c) => {
   }
 });
 
-// Start server in both dev and production
+// Start the server (works for both dev & production)
 const port = parseInt(process.env.PORT || '8000', 10);
 serve({
   fetch: app.fetch,
   port,
-  hostname: '0.0.0.0'  // Important for Render
+  hostname: '0.0.0.0', // Required for Render to detect the port
 }, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server is running on http://0.0.0.0:${port}`);
 });
 
 export default app;  
