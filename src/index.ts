@@ -11,7 +11,7 @@ const app = new Hono();
 app.use(
   '/api/*',
   cors({
-    origin: ['http://127.0.0.1:5500', 'https://your-production-domain.com'],
+    origin: ['http://127.0.0.1:5500', 'https://christine-portfolio-red.vercel.app/'],
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
