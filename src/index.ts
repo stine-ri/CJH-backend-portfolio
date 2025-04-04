@@ -20,9 +20,6 @@ app.use('*', cors({
   maxAge: 600
 }));
 
-// Health check endpoint (required by Render)
-app.get('/health', (c) => c.json({ status: 'ok' }));
-
 // Root endpoint
 app.get('/', (c) => {
   return c.json({
@@ -59,14 +56,7 @@ app.post('/api/contact', async (c) => {
   }
 });
 
-// Server configuration
-const port = Number(process.env.PORT) || 8000;
 serve({
   fetch: app.fetch,
-  port,
-  hostname: '0.0.0.0' // THIS IS CRUCIAL FOR RENDER
-}, () => {
-  console.log(`🚀 Server running on port ${port}`);
-});
-
-export default app;
+  port:Number(process.env.PORT)
+})
