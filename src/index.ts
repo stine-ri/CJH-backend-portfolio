@@ -3,37 +3,43 @@ import { serve } from '@hono/node-server';
 import { db } from './drizzle/db';
 import { contacts } from './drizzle/schema';
 import { sendContactEmail } from './lib/mailer';
-import {cors} from 'hono/cors'
+import { cors } from 'hono/cors';
+
 const app = new Hono();
 
+// CORS Middleware
+app.use('*', cors({
+  origin: [
+    'https://christine-portfolio-red.vercel.app',
+    'http://localhost:5500',
+    'http://127.0.0.1:5500'
+  ],
+  allowMethods: ['POST', 'GET', 'OPTIONS'],
+  allowHeaders: ['Content-Type'],
+  credentials: true,
+  maxAge: 600
+}));
 
-// Apply CORS middleware to all routes
-app.use(
-  '*',
-  cors({
-    origin: [
-      'https://christine-portfolio-red.vercel.app',
-      'http://localhost:5500', // For local development
-      'http://127.0.0.1:5500' // Alternative localhost
-    ],
-    allowMethods: ['POST', 'GET', 'OPTIONS'],
-    allowHeaders: ['Content-Type'],
-    credentials: true,
-    maxAge: 600
-  })
-)
-// Health check endpoint
-app.get('/', (c) => c.text('Backend is running!'));
+// Root endpoint
+app.get('/', (c) => {
+  return c.json({
+    status: 'running',
+    message: 'Backend service is operational',
+    available_endpoints: {
+      contact: 'POST /api/contact'
+    }
+  });
+});
+
+// Contact endpoint
 app.post('/api/contact', async (c) => {
   try {
     const { name, email, subject, message } = await c.req.json();
-
-    // Validate input
+    
     if (!name || !email || !subject || !message) {
       return c.json({ error: 'All fields are required' }, 400);
     }
 
-    // Store in database
     const [contact] = await db.insert(contacts).values({
       name,
       email,
@@ -41,7 +47,6 @@ app.post('/api/contact', async (c) => {
       message,
     }).returning();
 
-    // Send email
     await sendContactEmail({ name, email, subject, message });
 
     return c.json({ success: true, contact });
@@ -51,8 +56,16 @@ app.post('/api/contact', async (c) => {
   }
 });
 
+// Development vs Production handling
+if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
+  serve({
+    fetch: app.fetch,
+    port,
+  });
+  console.log(`Server running on http://localhost:${port}`);
+}
 
-// Add this export:
 export default {
   port: process.env.PORT || 8000,
   fetch: app.fetch

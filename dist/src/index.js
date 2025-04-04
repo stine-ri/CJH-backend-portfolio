@@ -2,25 +2,46 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const hono_1 = require("hono");
 const node_server_1 = require("@hono/node-server");
-const db_1 = require("./src/drizzle/db");
-const schema_1 = require("./src/drizzle/schema");
-const mailer_1 = require("./src/lib/mailer");
+const db_1 = require("./drizzle/db");
+const schema_1 = require("./drizzle/schema");
+const mailer_1 = require("./lib/mailer");
+const cors_1 = require("hono/cors");
 const app = new hono_1.Hono();
+// CORS Middleware
+app.use('*', (0, cors_1.cors)({
+    origin: [
+        'https://christine-portfolio-red.vercel.app',
+        'http://localhost:5500',
+        'http://127.0.0.1:5500'
+    ],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    allowHeaders: ['Content-Type'],
+    credentials: true,
+    maxAge: 600
+}));
+// Root endpoint
+app.get('/', (c) => {
+    return c.json({
+        status: 'running',
+        message: 'Backend service is operational',
+        available_endpoints: {
+            contact: 'POST /api/contact'
+        }
+    });
+});
+// Contact endpoint
 app.post('/api/contact', async (c) => {
     try {
         const { name, email, subject, message } = await c.req.json();
-        // Validate input
         if (!name || !email || !subject || !message) {
             return c.json({ error: 'All fields are required' }, 400);
         }
-        // Store in database
         const [contact] = await db_1.db.insert(schema_1.contacts).values({
             name,
             email,
             subject,
             message,
         }).returning();
-        // Send email
         await (0, mailer_1.sendContactEmail)({ name, email, subject, message });
         return c.json({ success: true, contact });
     }
@@ -29,9 +50,16 @@ app.post('/api/contact', async (c) => {
         return c.json({ error: 'Internal server error' }, 500);
     }
 });
-const port = 8000;
-console.log(`Server is running on port ${port}`);
-(0, node_server_1.serve)({
-    fetch: app.fetch,
-    port,
-});
+// Development vs Production handling
+if (process.env.NODE_ENV !== 'production') {
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
+    (0, node_server_1.serve)({
+        fetch: app.fetch,
+        port,
+    });
+    console.log(`Server running on http://localhost:${port}`);
+}
+exports.default = {
+    port: process.env.PORT || 8000,
+    fetch: app.fetch
+};
