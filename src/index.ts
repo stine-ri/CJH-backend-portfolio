@@ -55,6 +55,7 @@ app.post('/api/contact', async (c) => {
     return c.json({ error: 'Internal server error' }, 500);
   }
 });
+
  const port = Number(process.env.PORT) || 8000;
 serve({
   fetch: app.fetch,
