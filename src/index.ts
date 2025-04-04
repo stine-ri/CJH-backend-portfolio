@@ -22,7 +22,8 @@ app.use(
     maxAge: 600
   })
 )
-
+// Health check endpoint
+app.get('/', (c) => c.text('Backend is running!'));
 app.post('/api/contact', async (c) => {
   try {
     const { name, email, subject, message } = await c.req.json();
