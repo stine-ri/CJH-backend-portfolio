@@ -50,10 +50,9 @@ app.post('/api/contact', async (c) => {
   }
 });
 
-const port = 8000;
-console.log(`Server is running on port ${port}`);
 
-serve({
-  fetch: app.fetch,
-  port,
-});
+// Add this export:
+export default {
+  port: process.env.PORT || 8000,
+  fetch: app.fetch
+};
