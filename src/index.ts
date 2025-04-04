@@ -56,17 +56,14 @@ app.post('/api/contact', async (c) => {
   }
 });
 
-// Development vs Production handling
-if (process.env.NODE_ENV !== 'production') {
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 8000;
-  serve({
-    fetch: app.fetch,
-    port,
-  });
-  console.log(`Server running on http://localhost:${port}`);
-}
+// Start server in both dev and production
+const port = parseInt(process.env.PORT || '8000', 10);
+serve({
+  fetch: app.fetch,
+  port,
+  hostname: '0.0.0.0'  // Important for Render
+}, () => {
+  console.log(`Server running on port ${port}`);
+});
 
-export default {
-  port: process.env.PORT || 8000,
-  fetch: app.fetch
-};
+export default app;  
