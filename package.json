@@ -1,0 +1,41 @@
+{
+  "name": "cjh-backend-portfolio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch ./src/index.ts",
+    "start": "node ./dist/index.js",
+    "build": "tsc",
+    "generate:migration": "drizzle-kit generate",
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx src/drizzle/migrate.ts",
+    "studio": "drizzle-kit studio",
+    "push": "drizzle-kit generate && tsx src/drizzle/migrate.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0",
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "@hono/zod-validator": "^0.4.2",
+    "@jest/globals": "^29.7.0",
+    "@neondatabase/serverless": "^0.10.4",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.39.0",
+    "hono": "^4.7.5",
+    "nodemailer": "^6.10.0",
+    "typescript": "^5.8.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.12.0",
+    "@types/nodemailer": "^6.4.17",
+    "drizzle-kit": "^0.30.3",
+    "jest-mock": "^29.7.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
