@@ -7,13 +7,19 @@ import {cors} from 'hono/cors'
 const app = new Hono();
 
 
-//middleware
+// Configure CORS middleware
 app.use(
+  '/api/*',
   cors({
-    origin: "http://127.0.0.1:5500", // ✅ Allow only your frontend
-    credentials: true, // ✅ Allow authentication
+    origin: ['http://127.0.0.1:5500', 'https://your-production-domain.com'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['POST', 'GET', 'PUT', 'DELETE', 'OPTIONS'],
+    exposeHeaders: ['Content-Length'],
+    maxAge: 600,
+    credentials: true,
   })
 );
+
 app.post('/api/contact', async (c) => {
   try {
     const { name, email, subject, message } = await c.req.json();
