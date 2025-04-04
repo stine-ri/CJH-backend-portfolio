@@ -56,8 +56,9 @@ app.post('/api/contact', async (c) => {
   }
 });
 
- const port = Number(process.env.PORT) || 8000;
+const port = Number(process.env.PORT) || 8000;
+console.log(`Server is running on port ${port}`);
 serve({
   fetch: app.fetch,
-  port:Number(process.env.PORT)
+  port
 })
